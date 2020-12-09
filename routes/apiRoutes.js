@@ -32,4 +32,18 @@ router.post('/notes', (req, res) => {
     });
 });
 
+router.delete('/notes/:id', (req, res) => {
+    let allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    let selectedId = (req.params.id).toString();
+
+    allNotes = allNotes.filter(selectNote => {
+        return selectNote.id != selectedId;
+    });
+
+    fs.writeFile('./db/db.json', JSON.stringify(allNotes, null, 2), err => {
+        if (err) throw err;
+        res.json(allNotes);
+    });
+});
+
 module.exports = router;
