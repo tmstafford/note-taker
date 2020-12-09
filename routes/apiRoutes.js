@@ -1,22 +1,27 @@
 const router = require('express').Router();
 const fs = require('fs');
+const path = require('path');
 
 const { v4: uuidv4 } = require('uuid');
-const db = require('../db/db.json');
 
 router.get('/notes', (req, res) => {
-    res.json(db);
+    res.sendFile(path.join(__dirname, '../db/db.json'));
+});
+
+router.get('/notes/:id', (req, res) => {
+    let allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    res.json(allNotes[req.params.id]);
 });
 
 router.post('/notes', (req, res) => {
     let noteId = uuidv4();
+    let allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
     let newNote = {
-        id: noteId,
         title: req.body.title,
         text: req.body.text
     };
-    
-    let allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    // assign random id to each new note then push to all notes
+    newNote.id = noteId;
     allNotes.push(newNote);
 
     fs.writeFile('./db/db.json', JSON.stringify(allNotes, null, 2), err => {
