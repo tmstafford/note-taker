@@ -10,7 +10,10 @@ router.get('/notes', (req, res) => {
 
 router.get('/notes/:id', (req, res) => {
     let allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
-    res.json(allNotes[req.params.id]);
+    let idNote = (req.params.id).toString();
+
+    let result = allNotes.filter(val => val.id == idNote);
+    res.json(result);
 });
 
 router.post('/notes', (req, res) => {
